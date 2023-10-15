@@ -39,6 +39,7 @@ import attr
 from outcome import Error, Outcome, Value, capture
 from sniffio import thread_local as sniffio_library
 from sortedcontainers import SortedDict
+from typing_extensions import TypeVarTuple
 
 from .. import _core
 from .._abc import Clock, Instrument
@@ -79,6 +80,7 @@ StatusT = TypeVar("StatusT")
 StatusT_co = TypeVar("StatusT_co", covariant=True)
 StatusT_contra = TypeVar("StatusT_contra", contravariant=True)
 RetT = TypeVar("RetT")
+Ts = TypeVarTuple("Ts")
 
 
 @final
@@ -2254,8 +2256,8 @@ def run(
 
 
 def start_guest_run(
-    async_fn: Callable[..., Awaitable[RetT]],
-    *args: object,
+    async_fn: Callable[[*Ts], Awaitable[RetT]],  # type:ignore[valid-type]
+    *args: *Ts,  # type:ignore[valid-type]
     run_sync_soon_threadsafe: Callable[[Callable[[], object]], object],
     done_callback: Callable[[Outcome[RetT]], object],
     run_sync_soon_not_threadsafe: Callable[[Callable[[], object]], object]
